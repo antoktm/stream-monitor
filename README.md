@@ -38,7 +38,7 @@ A status compiler script is also available and can be ran optionally (eg.: using
 
 ## Configuration
 - After the scripts has been downloaded, create/edit the configuration file. The configuration template is available from the `default.conf` file. It is highly advised that full paths are being used for the configurations related with files and directories.
-- Populate the list with the streams that will be monitored. 
+- Populate the list with the streams that will be monitored. The basic format of the list is : `channel id (numerical),channel name,address`. 
   - UDP based list supports multi-profile in separate multicast addresses. Refer to `udplist.csv` file for UDP list. 
   - HLS based list only supports single url in each lines, but this url may support multiple bitrate and all those bitrate profiles will be monitored. Refer to `hlslist.csv` for the HLS list formatting.
 - Update the configuration file according to the list that will be used.
