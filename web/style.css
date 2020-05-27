@@ -1,0 +1,169 @@
+* {
+  box-sizing: border-box;
+  font-family: sans-serif;
+
+}
+
+#more {
+  display: none;
+  font-family: monospace;
+}
+
+.header {
+  width: 50%;
+  height: 50px;
+  float: left;
+  line-height: 15%;
+  font-size: small;
+  overflow: hidden;
+}
+
+.headermarquee {
+  width: 50%;
+  height: 50px;
+  float: left;
+  line-height: 15%;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.headermarquee span h1 {
+  display: inline-block;
+  padding-left: 100%;
+  will-change: transform;
+  /* show the marquee just outside the paragraph */
+  animation: marquee 15s linear infinite;
+}
+
+.headermarquee span h1:hover {
+  animation-play-state: paused
+}
+
+
+/* Make it move */
+
+@keyframes marquee {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(-100%, 0);
+  }
+}
+
+
+/* Respect user preferences about animations */
+
+@media (prefers-reduced-motion: reduce) {
+  .headermarquee { 
+    white-space: normal 
+  }
+  .headermarquee span h1{
+    animation: none;
+    padding-left: 0;
+  }
+}
+
+.subheader {
+  float: left;
+  width: 100%;
+  font-size: x-small;
+  padding: 15px;
+}
+
+h1 {
+  font-size: xx-large;
+  font-family: sans-serif; 
+  line-height: 1;
+  margin-top: 5px;
+}
+
+h2 {
+  font-size: medium;
+}
+
+h2 a {
+  color: blue;
+  cursor: pointer;
+}
+
+.hiddeninfo {
+  visibility: hidden;
+  height: 0px;
+}
+
+.ONLIN {
+  width: 12.5%;
+  height: 100px;
+  float: left;
+  padding: 1px;
+  background-color: lightgreen;
+  font-size: small;
+  text-align: center;
+  border: 1px solid black;
+  cursor: pointer;
+}
+
+.ONLIN h2{
+  font-size: small;
+}
+
+.OFFLIN {
+  width: 12.5%;
+  height: 100px;
+  float: left;
+  padding: 1px;
+  background-color: #2F2F2F;
+  font-size: small;
+  color: white; 
+  text-align: center;
+  bord
+er: 1px solid black;
+  cursor: pointer;
+}
+
+.OFFLIN h2{
+  font-size: small;
+}
+
+.WARNIN {
+  width: 12.5%;
+  height: 100px;
+  float: left;
+  padding: 1px;
+  background-color: orange;
+  font-size: small;
+  text-align: center;
+  border: 1px solid black;
+  cursor: pointer;
+}
+
+.WARNIN h2{
+  font-size: small;
+}
+
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+  line-height: 25%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+
+.DETAILS {
+  font-size: small;	
+}
+
+.DETAILS p{
+  line-height: 15%;
+}
+ 

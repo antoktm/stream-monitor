@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="refresh" content="60" >
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body onload="loadAllXml()">
+
+<div class="header" id="pagetitle"><h1>Stream Monitor ver 1.0</h1></div>
+
+<div class="header">
+        <p id="gentime"></p>
+        <p id="uptime"></p>
+        <p id="lastchange"></p>
+</div>
+
+<div class="subheader">
+        <h2 id="status"></h2>
+        <p id="changelog"></p>
+</div>
+
+<div class="hiddeninfo" id="infoCopy">
+        <textarea id="infoPaste"></textarea>
+</div>
+
+<div class="subheader">
+        <button id="button1" onclick="CopyToClipboard('infoCopy')">Copy Status</button>
+        <button onclick="readMore()" id="moreBtn">Show Latest Log</button><br>
+        <span id="more"></span>
+</div>
+
+<div id="offlinegrid"></div>
+
+<div class="subheader"><h2>All Channels</h2></div>
+
+<div id="allgrid"></div>
+
+<script src="mainscript.js"></script>
+
+</body>
+</html>
