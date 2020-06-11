@@ -11,19 +11,20 @@
 [ $# -eq 0 ] && { echo "Usage: $0 configfile"; exit 1; }
 # Read the parameters and config file
 configfile=$1
+configlines=$(sed 's/#.*//' $configfile)
 
-tmpdir=`cat $configfile|grep tmpdir|cut -d"=" -f2`
-xmldir=`cat $configfile|grep xmldir|cut -d"=" -f2`
-logfile=`cat $configfile|grep logfile|cut -d"=" -f2`
-listfile=$(cat $configfile|grep channellist|cut -d"=" -f2)
-logshown=$(cat $configfile|grep logshownlines|cut -d"=" -f2)
-logrotate=$(cat $configfile|grep logrotate|cut -d"=" -f2)
-lastoutagefile=$(cat $configfile|grep loglastoutage|cut -d"=" -f2)
-mode=$(cat $configfile|grep mode|cut -d"=" -f2)
-nodename=$(cat $configfile|grep nodename|cut -d"=" -f2)
+tmpdir=$(grep tmpdir <<< "$configlines"|cut -d"=" -f2)
+xmldir=$(grep xmldir <<< "$configlines"|cut -d"=" -f2)
+logfile=$(grep logfile <<< "$configlines"|cut -d"=" -f2)
+listfile=$(grep channellist <<< "$configlines"|cut -d"=" -f2)
+logshown=$(grep logshownlines <<< "$configlines"|cut -d"=" -f2)
+logrotate=$(grep logrotate <<< "$configlines"|cut -d"=" -f2)
+lastoutagefile=$(grep loglastoutage <<< "$configlines"|cut -d"=" -f2)
+mode=$(grep mode <<< "$configlines"|cut -d"=" -f2)
+nodename=$(grep nodename <<< "$configlines"|cut -d"=" -f2)
 
-statusxml=$(cat $configfile|grep statusfile|cut -d"=" -f2)
-compiledxml=$(cat $configfile|grep compiledxml|cut -d"=" -f2)
+statusxml=$(grep statusfile <<< "$configlines"|cut -d"=" -f2)
+compiledxml=$(grep compiledxml <<< "$configlines"|cut -d"=" -f2)
 
 statxmltmp=$tmpdir/statxml.tmp
 compxmltmp=$tmpdir/compxml.tmp

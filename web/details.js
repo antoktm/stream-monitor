@@ -193,10 +193,6 @@ function populateProfile(xml,profileTxt){
 	chStat = xmlDoc.getElementsByTagName("CHSTAT")[0].childNodes[0].nodeValue;
 	chChange = xmlDoc.getElementsByTagName("CHMONITORED")[0].childNodes[0].nodeValue;
 	chBitrate = xmlDoc.getElementsByTagName("BITRATE")[0].childNodes[0].nodeValue;
-	dlNum = xmlDoc.getElementsByTagName("DLNUM")[0].childNodes[0].nodeValue;
-	segmentSize = xmlDoc.getElementsByTagName("CHUNKSIZE")[0].childNodes[0].nodeValue;
-	dlSpeed = xmlDoc.getElementsByTagName("DLSPEED")[0].childNodes[0].nodeValue;
-	
 	chAddressHead = xmlDoc.getElementsByTagName("CHADDRESS")[0].childNodes[0].nodeValue.slice(0, 58);
 	chAddressTail = xmlDoc.getElementsByTagName("CHADDRESS")[0].childNodes[0].nodeValue.slice(58);
 	
@@ -211,6 +207,9 @@ function populateProfile(xml,profileTxt){
 	
 
 	if (chType == "HLS") {
+		dlNum = xmlDoc.getElementsByTagName("DLNUM")[0].childNodes[0].nodeValue;
+                segmentSize = xmlDoc.getElementsByTagName("CHUNKSIZE")[0].childNodes[0].nodeValue;
+                dlSpeed = xmlDoc.getElementsByTagName("DLSPEED")[0].childNodes[0].nodeValue;
 		chCodecs = xmlDoc.getElementsByTagName("CODECS")[0].childNodes[0].nodeValue;
 		chRes = xmlDoc.getElementsByTagName("RESOLUTION")[0].childNodes[0].nodeValue;
 		chBuffer = xmlDoc.getElementsByTagName("BUFFER")[0].childNodes[0].nodeValue;
@@ -219,7 +218,11 @@ function populateProfile(xml,profileTxt){
 	}
 	else
 	{
+		freezePct = xmlDoc.getElementsByTagName("FREEZEPCT")[0].childNodes[0].nodeValue;
+                freezeTime = xmlDoc.getElementsByTagName("FREEZEDUR")[0].childNodes[0].nodeValue;
 		chContinuity = xmlDoc.getElementsByTagName("CONTRATE")[0].childNodes[0].nodeValue;
+                chIdNum = xmlDoc.getElementsByTagName("CHID")[0].childNodes[0].nodeValue;
+
 		pidNum = xmlDoc.getElementsByTagName("PID");
 		pidDesc = xmlDoc.getElementsByTagName("PIDDESC");
 		pidRate = xmlDoc.getElementsByTagName("PIDRATE");
@@ -236,8 +239,10 @@ function populateProfile(xml,profileTxt){
 	}
 
 	if (chType != "HLS") {
+		oneLine += "<p><img class=\"thumbs\" src=\"thumbs/" + chIdNum + ".png\" alt=\"No Thumbnail\"></p>";
 		oneLine += "<p>Bitrate: " + chBitrate + " bps</p>";
 		oneLine += "<p>Continuity Rate: " + chContinuity + "%</p>";
+		oneLine += "<p>Still frames: " + freezeTime + " second(s) - "  + freezePct + "%</p>";
 	}
 	oneLine += "<p>Last Monitored: " + chChange + "</p>";
 

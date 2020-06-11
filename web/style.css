@@ -71,6 +71,14 @@
   padding: 15px;
 }
 
+.thumbs {
+	float: right;
+	width: 120px;
+	height: 68px;
+	margin-bottom:5px;
+	margin-left:5px;
+}
+
 h1 {
   font-size: xx-large;
   font-family: sans-serif; 

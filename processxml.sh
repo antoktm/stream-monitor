@@ -1,7 +1,7 @@
 #!/bin/bash
 #########################################################
 # Stream Monitor                                        #
-# processxmlhls.sh - Called script for XML output - UDP #
+# processxml.sh - Called script for XML output - UDP #
 #                                                       #
 # (c) Tri Maryanto                                      #
 # IPTV Development - MNC Play                           #
@@ -14,12 +14,16 @@ chid=$1
 name=$2
 address=$3
 configfile=$4
+configlines=$(sed 's/#.*//' $configfile)
 
-expectedcont=`cat $configfile|grep mincontinuityrate|cut -d"=" -f2`
-tmpdir=`cat $configfile|grep tmpdir|cut -d"=" -f2`
-xmldir=`cat $configfile|grep xmldir|cut -d"=" -f2`
-logfile=`cat $configfile|grep logfile|cut -d"=" -f2`
-lastoutagefile=$(cat $configfile|grep loglastoutage|cut -d"=" -f2)
+expectedcont=$(grep mincontinuityrate <<< "$configlines"|cut -d"=" -f2)
+tmpdir=$(grep tmpdir <<< "$configlines"|cut -d"=" -f2)
+xmldir=$(grep xmldir <<< "$configlines"|cut -d"=" -f2)
+logfile=$(grep logfile <<< "$configlines"|cut -d"=" -f2)
+lastoutagefile=$(grep loglastoutage <<< "$configlines"|cut -d"=" -f2)
+freezemode=$(grep freezedetect <<< "$configlines"|cut -d"=" -f2)
+monitordur=$(grep monitorduration <<< "$configlines"|cut -d"=" -f2)
+freezethreshold=$(grep freezedurationpercentage <<< "$configlines"|cut -d"=" -f2)
 
 inputfile=$tmpdir/$chid
 [ ! -f "$inputfile" ] && { echo "Error: $0 file not found."; exit 2; }
@@ -75,8 +79,34 @@ then
 		newstat="WARNING"
 	fi
 else
+	totalbitrate=0
 	continuityrate=0
 	newstat="OUTAGE"
+fi
+
+if [ "$freezemode" == "on" ]
+then
+	freezeduration=0
+	freezepercent=0
+	freezelines=$(cat $inputfile.frz|wc -l)
+	if [ "$freezelines" -gt 0 ]
+	then
+		while read -r line
+		do
+			freezeduration=$(echo "scale=2; $freezeduration + $line"|bc -l)
+		done < <(grep freeze_duration $inputfile.frz | cut -d"=" -f2)
+
+		if [ "$freezeduration" == "0" ]
+		then
+			freezeduration="$monitordur"
+		fi
+
+		freezepercent=$(echo "scale=2; $freezeduration / $monitordur * 100"|bc -l)
+	fi
+	if [ "$(echo "$freezepercent"|cut -d"." -f1)" -gt "$freezethreshold" ]
+	then
+		newstat="WARNING"
+	fi
 fi
 
 
@@ -91,7 +121,6 @@ else
 	fi
 fi
 
-
 ## print the informations
 echo '<?xml version="1.0" encoding="UTF-8"?>'
 echo "	<CHANNEL>"
@@ -103,6 +132,15 @@ echo "		<CHMONITORED>$monitored</CHMONITORED>"
 echo "		<CHADDRESS>$address</CHADDRESS>"
 echo "		<BITRATE>$totalbitrate</BITRATE>"
 echo "		<CONTRATE>$continuityrate</CONTRATE>"
+if [ "$freezemode" == "on" ]
+then
+	echo "		<FREEZEDUR>$freezeduration</FREEZEDUR>"
+	echo "		<FREEZEPCT>$freezepercent</FREEZEPCT>"
+else
+	echo "		<FREEZEDUR>not monitored</FREEZEDUR>"
+	echo "		<FREEZEPCT>not monitored</FREEZEPCT>"
+fi
+
 echo "		<STREAMTYPE>UDP</STREAMTYPE>"
 i=0
 for pidnum in "${pid[@]}"
