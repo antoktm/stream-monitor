@@ -11,24 +11,24 @@
 [ $# -eq 0 ] && { echo "Usage: $0 configfile"; exit 1; }
 # Read the parameters and config file
 configfile=$1
-configlines=$(sed 's/#.*//' $configfile)
 
-tmpdir=$(grep tmpdir <<< "$configlines"|cut -d"=" -f2)
-xmldir=$(grep xmldir <<< "$configlines"|cut -d"=" -f2)
-logfile=$(grep logfile <<< "$configlines"|cut -d"=" -f2)
-listfile=$(grep channellist <<< "$configlines"|cut -d"=" -f2)
-logshown=$(grep logshownlines <<< "$configlines"|cut -d"=" -f2)
-logrotate=$(grep logrotate <<< "$configlines"|cut -d"=" -f2)
-lastoutagefile=$(grep loglastoutage <<< "$configlines"|cut -d"=" -f2)
-mode=$(grep mode <<< "$configlines"|cut -d"=" -f2)
-nodename=$(grep nodename <<< "$configlines"|cut -d"=" -f2)
+tmpdir=`cat $configfile|grep tmpdir|cut -d"=" -f2`
+xmldir=`cat $configfile|grep xmldir|cut -d"=" -f2`
+logfile=`cat $configfile|grep logfile|cut -d"=" -f2`
+listfile=$(cat $configfile|grep channellist|cut -d"=" -f2)
+logshown=$(cat $configfile|grep logshownlines|cut -d"=" -f2)
+logrotate=$(cat $configfile|grep logrotate|cut -d"=" -f2)
+lastoutagefile=$(cat $configfile|grep loglastoutage|cut -d"=" -f2)
+mode=$(cat $configfile|grep mode|cut -d"=" -f2)
+nodename=$(cat $configfile|grep nodename|cut -d"=" -f2)
 
-statusxml=$(grep statusfile <<< "$configlines"|cut -d"=" -f2)
-compiledxml=$(grep compiledxml <<< "$configlines"|cut -d"=" -f2)
+statusxml=$(cat $configfile|grep statusfile|cut -d"=" -f2)
+compiledxml=$(cat $configfile|grep compiledxml|cut -d"=" -f2)
 
 statxmltmp=$tmpdir/statxml.tmp
 compxmltmp=$tmpdir/compxml.tmp
 
+countonline=0
 countoutage=0
 countwarning=0
 
@@ -98,13 +98,28 @@ do
 		fi
 		echo "		<PROFILECOUNT>"$(( chprofilecount - 1 ))"</PROFILECOUNT>" >> $compxmltmp
 	else
-		chstat=$(grep CHSTAT $xmldir/$chidnorm.xml | sed -e 's/.*<CHSTAT>//' -e 's/<\/CHSTAT>.*//')
-		if [ "$mode" = "hls" ]
-                then
-			egrep "CHID|CHNAME|CHSTAT|CHLASTCHANGE|BITRATE|BUFFER" $xmldir/$chidnorm.xml >> $compxmltmp
+		if [ -f "$xmldir"/"$chidnorm".xml ]
+		then
+			chstat=$(grep CHSTAT $xmldir/$chidnorm.xml | sed -e 's/.*<CHSTAT>//' -e 's/<\/CHSTAT>.*//')
+			if [ "$mode" = "hls" ]
+                	then
+				egrep "CHID|CHNAME|CHSTAT|CHLASTCHANGE|BITRATE|BUFFER" $xmldir/$chidnorm.xml >> $compxmltmp
+			else
+				egrep "CHID|CHNAME|CHSTAT|CHLASTCHANGE|BITRATE|CONTRATE" $xmldir/$chidnorm.xml >> $compxmltmp
+			fi
 		else
-			egrep "CHID|CHNAME|CHSTAT|CHLASTCHANGE|BITRATE|CONTRATE" $xmldir/$chidnorm.xml >> $compxmltmp
+			chstat=$(grep CHSTAT $xmldir/dummy.xml | sed -e 's/.*<CHSTAT>//' -e 's/<\/CHSTAT>.*//')
+			chname=$(echo $line|cut -d, -f2)
+			echo "		<CHID>$chid</CHID>" >> $compxmltmp
+			echo "		<CHNAME>$chname</CHNAME>" >> $compxmltmp
+			if [ "$mode" = "hls" ]
+                	then
+				egrep "CHSTAT|CHLASTCHANGE|BITRATE|BUFFER" $xmldir/dummy.xml >> $compxmltmp
+			else
+				egrep "CHSTAT|CHLASTCHANGE|BITRATE|CONTRATE" $xmldir/dummy.xml >> $compxmltmp
+			fi
 		fi
+
 		echo "		<PROFILECOUNT>0</PROFILECOUNT>" >> $compxmltmp
 	fi
 	
