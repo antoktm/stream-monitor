@@ -17,7 +17,13 @@ configfile=$4
 configlines=$(sed 's/#.*//' $configfile)
 
 inputeth=$(grep interface <<< "$configlines"|cut -d"=" -f2)
-inputip=$(ip -o -4 addr list $inputeth | awk '{print $4}' | cut -d"/" -f1)
+ckiface=$(ip -o -4 addr list $inputeth)
+if [ "$?" == "0" ]
+then
+	inputip=$(echo $ckiface | awk '{print $4}' | cut -d"/" -f1)
+else
+	inputip="0.0.0.0"
+fi
 duration=$(grep monitorduration <<< "$configlines"|cut -d"=" -f2)
 expectedcont=$(grep mincontinuityrate <<< "$configlines"|cut -d"=" -f2)
 timeout=$(grep igmptimeout <<< "$configlines"|cut -d"=" -f2)
