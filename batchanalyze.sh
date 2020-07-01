@@ -12,10 +12,11 @@
 configfile=$1
 [ $# -eq 0 ] && { echo "Usage: $0 configfile"; exit 1; }
 [ ! -f "$configfile" ] && { echo "Error: $0 file not found."; exit 2; }
+configlines=$(sed 's/#.*//' $configfile)
 
-tmpdir=$(cat $configfile|grep tmpdir|cut -d"=" -f2)
-chlistfull=$(cat $configfile|grep channellist|cut -d"=" -f2)
-mode=$(cat $configfile|grep mode|cut -d"=" -f2)
+tmpdir=$(grep tmpdir <<< "$configlines"|cut -d"=" -f2)
+chlistfull=$(grep channellist <<< "$configlines"|cut -d"=" -f2)
+mode=$(grep mode <<< "$configlines"|cut -d"=" -f2)
 
 
 listcounter=1
@@ -32,7 +33,7 @@ function udpscan {
 	chlist=$(echo $chlistfull|cut -d"=" -f2|rev|cut -d"/" -f1|rev)
 	dos2unix -n $chlistfull $tmpdir/$chlist
 
-	maxconcur=$(cat $configfile|grep maxconcurrent|cut -d"=" -f2)
+	maxconcur=$(grep maxconcurrent <<< "$configlines"|cut -d"=" -f2)
 	listlength=$(cat $tmpdir/$chlist |wc -l)
 	chlistexpanded=$tmpdir/$chlist.exp
 	chunklist=$tmpdir/$chlist.chunk
@@ -102,8 +103,8 @@ function hlsscan {
 # Read the list file
 	chlist=$(echo $chlistfull|cut -d"=" -f2|rev|cut -d"/" -f1|rev)
 	dos2unix -n $chlistfull $tmpdir/$chlist
-	httpretry=$(( $(cat $configfile|grep httpretry|cut -d"=" -f2) + 1 ))
-	maxconcur=$(cat $configfile|grep maxconcurrent|cut -d"=" -f2)
+	httpretry=$(( $(grep httpretry <<< "$configlines"|cut -d"=" -f2) + 1 ))
+	maxconcur=$(grep maxconcurrent <<< "$configlines"|cut -d"=" -f2)
 	chlist=$tmpdir/$chlist
 	listlength=$(cat $chlist |wc -l)
 
