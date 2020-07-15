@@ -32,6 +32,8 @@ function udpscan {
 # Read the list file
 	chlist=$(echo $chlistfull|cut -d"=" -f2|rev|cut -d"/" -f1|rev)
 	dos2unix -n $chlistfull $tmpdir/$chlist
+	configlines=$(sed 's/#.*//' $configfile)
+
 
 	maxconcur=$(grep maxconcurrent <<< "$configlines"|cut -d"=" -f2)
 	listlength=$(cat $tmpdir/$chlist |wc -l)
@@ -103,8 +105,6 @@ function hlsscan {
 # Read the list file
 	chlist=$(echo $chlistfull|cut -d"=" -f2|rev|cut -d"/" -f1|rev)
 	dos2unix -n $chlistfull $tmpdir/$chlist
-	httpretry=$(( $(grep httpretry <<< "$configlines"|cut -d"=" -f2) + 1 ))
-	maxconcur=$(grep maxconcurrent <<< "$configlines"|cut -d"=" -f2)
 	chlist=$tmpdir/$chlist
 	listlength=$(cat $chlist |wc -l)
 
@@ -115,7 +115,11 @@ function hlsscan {
 		chnumber=$(echo $line|cut -d, -f1)
 		chname=$(echo $line|cut -d, -f2)
 		profileno="0"
-
+		
+		configlines=$(sed 's/#.*//' $configfile)
+		httpretry=$(( $(grep httpretry <<< "$configlines"|cut -d"=" -f2) + 1 ))
+		maxconcur=$(grep maxconcurrent <<< "$configlines"|cut -d"=" -f2)
+	
 		for (( i=0; i<$httpretry; i++ ))
 		do
 			curlres=$(curl -Ls --retry $httpretry --retry-delay 0 -w "%{http_code};%{url_effective}\n" $url)
@@ -154,6 +158,7 @@ function hlsscan {
 # Start monitoring based on the maximum concurrent stream		
 		while true
 		do
+	
 			arrayurllen=${#arrayurl[@]}
 
 			if [ "$arrayurllen" -ge "$maxconcur" ]

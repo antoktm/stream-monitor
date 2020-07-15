@@ -43,6 +43,7 @@ save=$tmpdir/$chidnorm
 savexml=$xmldir/$chidnorm.xml
 savexmlbase=$xmldir/$chidbase.xml
 savexmltmp=$tmpdir/$chidnorm.xml.tmp
+savestr=""
 
 # Get the m3u8
 for (( i=0; i<$httpretry; i++ ))
@@ -61,7 +62,7 @@ baseurl=$(echo "$curlres"|tail -1|cut -d";" -f2|sed -e "s/\/*$basem3u8//")
 
 
 # Download and process the segmented TS file
-echo $chparam > $save
+savestr="$chparam\n"
 chunksparam=$(curl --connect-timeout $timeout -Ls $address|grep '#EXTINF' -A1|tail -2)
 buffertime=0
 totalsize=0
@@ -126,15 +127,16 @@ do
 done
 
 # output to text file
-echo "status:$chstatus" >> $save
-echo "buffer:$buffertime" >> $save
-echo "httpcode:$curlresult" >> $save
-echo "avgspeed:$(echo "scale=2; $totalspeed/$duration"|bc -l)" >> $save
-echo "avgtime:$(echo "scale=2; $totaltime/$duration"|bc -l)" >> $save
-echo "avgsize:$(echo "scale=2; $totalsize/$duration"|bc -l)" >> $save
-echo "avgcontime:$(echo "scale=4; $totalconnect/$duration"|bc -l)" >> $save
-echo "downloadedchunks:$downloadedchunks" >> $save
-echo "targetchunks:$duration" >> $save
+savestr="$savestr""status:$chstatus\n"
+savestr="$savestr""buffer:$buffertime\n"
+savestr="$savestr""httpcode:$curlresult\n"
+savestr="$savestr""avgspeed:$(echo "scale=2; $totalspeed/$duration"|bc -l)\n"
+savestr="$savestr""avgtime:$(echo "scale=2; $totaltime/$duration"|bc -l)\n"
+savestr="$savestr""avgsize:$(echo "scale=2; $totalsize/$duration"|bc -l)\n"
+savestr="$savestr""avgcontime:$(echo "scale=4; $totalconnect/$duration"|bc -l)\n"
+savestr="$savestr""downloadedchunks:$downloadedchunks\n"
+savestr="$savestr""targetchunks:$duration\n"
+echo -ne "$savestr" > $save
 
 # Reformat the output into XML
 ./processxmlhls.sh $chidnorm "$chname" $address $configfile > $savexmltmp
