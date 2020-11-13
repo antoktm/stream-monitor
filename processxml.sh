@@ -65,6 +65,9 @@ IFS=$'\r\n' GLOBIGNORE='*' command eval  'bitrate=($(cat $inputfile |grep "^pid:
 ## read pid's description and put into array
 IFS=$'\r\n' GLOBIGNORE='*' command eval  'description=($(cat $inputfile |grep "^pid:" | sed -e "s/.*:description=//" ))'
 
+## get the source address
+source=$(cat $inputfile|grep sources|cut -d"=" -f2)
+
 ## evaluate the informations
 for disccount in "${discontinuities[@]}"
 do
@@ -114,7 +117,7 @@ if [ "$newstat" == "$oldstat" ]
 then
 	newchanges=$oldchanges
 else
-	echo "$newchanges : $chid-$name status changed into $newstat" >> $logfile
+	echo "$newchanges : $chid-$name status changed into $newstat. Source IP: $source" >> $logfile
 	if [ "$newstat" == "OUTAGE" ]
 	then
 		echo "$newchanges" > $lastoutagefile
@@ -132,6 +135,7 @@ echo "		<CHMONITORED>$monitored</CHMONITORED>"
 echo "		<CHADDRESS>$address</CHADDRESS>"
 echo "		<BITRATE>$totalbitrate</BITRATE>"
 echo "		<CONTRATE>$continuityrate</CONTRATE>"
+echo "          <SOURCEIP>$source</SOURCEIP>"
 if [ "$freezemode" == "on" ]
 then
 	echo "		<FREEZEDUR>$freezeduration</FREEZEDUR>"
