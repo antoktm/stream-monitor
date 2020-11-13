@@ -222,7 +222,8 @@ function populateProfile(xml,profileTxt){
                 freezeTime = xmlDoc.getElementsByTagName("FREEZEDUR")[0].childNodes[0].nodeValue;
 		chContinuity = xmlDoc.getElementsByTagName("CONTRATE")[0].childNodes[0].nodeValue;
                 chIdNum = xmlDoc.getElementsByTagName("CHID")[0].childNodes[0].nodeValue;
-
+		chSource = xmlDoc.getElementsByTagName("SOURCEIP")[0].childNodes[0].nodeValue;
+		
 		pidNum = xmlDoc.getElementsByTagName("PID");
 		pidDesc = xmlDoc.getElementsByTagName("PIDDESC");
 		pidRate = xmlDoc.getElementsByTagName("PIDRATE");
@@ -241,6 +242,7 @@ function populateProfile(xml,profileTxt){
 	if (chType != "HLS") {
 		oneLine += "<p><img class=\"thumbs\" src=\"thumbs/" + chIdNum + ".png\" alt=\"No Thumbnail\"></p>";
 		oneLine += "<p>Bitrate: " + chBitrate + " bps</p>";
+		oneLine += "<p>Source IP Address: " + chSource + "</p>";
 		oneLine += "<p>Continuity Rate: " + chContinuity + "%</p>";
 		oneLine += "<p>Still frames: " + freezeTime + " second(s) - "  + freezePct + "%</p>";
 	}
