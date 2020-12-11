@@ -53,9 +53,9 @@ function udpscan {
 		do
 			thisline=$(sed -n $(echo $i)p $chlist)
 			thiscellcount=$(echo $thisline|sed 's/[^,]//g' | wc -c)
+			thischid=$(echo $thisline|cut -d',' -f1)
 			if [ "$thiscellcount" -gt 3 ]
-			then
-				thischid=$(echo $thisline|cut -d',' -f1)
+			then				
 				thischname=$(echo $thisline|cut -d',' -f2)
 				for (( j=3; j<=thiscellcount; j++ ))
 				do
@@ -66,6 +66,9 @@ function udpscan {
 			else
 				echo $thisline >> $chlistexpanded
 			fi
+# Delete excess XMLs
+			profilescount=$(( thiscellcount - 2 ))
+			./cleanmultiprofile.sh $thischid $profilescount $configfile
 		done
 		chlist=$chlistexpanded
 		listlength=$addresscount
@@ -154,7 +157,10 @@ function hlsscan {
 			arrayid+=("$chnumber")
 			arrayparam+=("null")
 		fi
-
+		
+# Delete excess XMLs
+		./cleanmultiprofile.sh $chnumber $profilescount $configfile
+			
 # Start monitoring based on the maximum concurrent stream		
 		while true
 		do
