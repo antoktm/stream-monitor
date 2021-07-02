@@ -183,7 +183,8 @@ function loadXMLProfile(xmlFile,profileTxt) {
 }
 
 function populateProfile(xml,profileTxt){
-	var xmlDoc, txtAll, chStat, chChange, chBitrate, chContinuity, oneLine, pidNum, pidDesc, pidRate, chType, chCodecs, chRes, chBuffer, chHttpCode,chAddressHead,chAddressTail, dlNum, segmentSize, dlSpeed;
+	var xmlDoc, txtAll, chStat, chChange, chBitrate, chContinuity, oneLine, pidNum, pidDesc, pidRate, chType, chCodecs, chRes, chBuffer, chHttpCode,chAddressHead,chAddressTail, dlNum, segmentSize, dlSpeed, chCCHistory, chCCAverage ;
+	var chCCArr = [];
 	xmlDoc = xml.responseXML;
 	txtAll = "";
 	oneLine = "";
@@ -227,6 +228,10 @@ function populateProfile(xml,profileTxt){
 		pidNum = xmlDoc.getElementsByTagName("PID");
 		pidDesc = xmlDoc.getElementsByTagName("PIDDESC");
 		pidRate = xmlDoc.getElementsByTagName("PIDRATE");
+
+		chCCHistory = xmlDoc.getElementsByTagName("CCERROR")[0].childNodes[0].nodeValue;
+                chCCAverage = xmlDoc.getElementsByTagName("CCAVERAGE")[0].childNodes[0].nodeValue;
+                chCCArr = chCCHistory.split(',');
 	}
 
 	oneLine = "<div class=\"DETAILS\">";	
@@ -243,7 +248,7 @@ function populateProfile(xml,profileTxt){
 		oneLine += "<p><img class=\"thumbs\" src=\"thumbs/" + chIdNum + ".png\" alt=\"No Thumbnail\"></p>";
 		oneLine += "<p>Bitrate: " + chBitrate + " bps</p>";
 		oneLine += "<p>Source IP Address: " + chSource + "</p>";
-		oneLine += "<p>Continuity Rate: " + chContinuity + "%</p>";
+		oneLine += "<p>CC Errors Average: " + chCCAverage + " occurrences</p>";
 		oneLine += "<p>Still frames: " + freezeTime + " second(s) - "  + freezePct + "%</p>";
 	}
 	oneLine += "<p>Last Monitored: " + chChange + "</p>";
@@ -261,6 +266,9 @@ function populateProfile(xml,profileTxt){
 		oneLine += "</table>"
 	}
 	else {	
+		oneLine += "<table><tr><td style=\"width:75%;padding:0px\">";
+                var thisChartCanvas = "line-chart" + profileTxt;
+
 		oneLine += "<table><tr><th>PID</th><th>Description</th><th>PID Rate</th></tr>"
 
 		for (i = 0; i< pidNum.length; i++){
@@ -271,11 +279,56 @@ function populateProfile(xml,profileTxt){
 			oneLine +=  "<tr><td>" + thisPidNum + "</td>" + "<td>" + thisPidDesc + "</td>" + "<td>" + thisPidRate + "</td></tr>";
  		}
 	
-		oneLine += "</table>";
+                oneLine += "</table></td><td style=\"vertical-align:center;width:25%\">"
+                oneLine += "<canvas id=\"" + thisChartCanvas + "\" width=\"240\" height=\"135\"></canvas>";
+                oneLine += "</td></tr></table>";
 	}
 	oneLine += "</div>";
 
 	document.getElementById("profilesgrid").innerHTML += oneLine;
+
+	if (chType != "HLS") {
+                drawCCChart(chCCArr,chCCAverage,thisChartCanvas);
+        }
+}
+
+function drawCCChart(datafillArr,ccAverage,canvasName){
+        var averageArr = [];
+        for (i = 0; i < datafillArr.length; i++) {
+                averageArr.push(ccAverage);
+        }
+
+        new Chart(document.getElementById(canvasName), {
+                type: 'line',
+                data: {
+                  labels: ["t-3","t-2","t-1","last"],
+                  datasets: [{
+                    data: datafillArr,
+                    label: "CC Errors Count",
+                    borderColor: "#3e95cd",
+                    fill: false
+                  }, {
+                    data: averageArr,
+                    label: "CC Errors Average",
+                    borderColor: "#8e5ea2",
+                    borderDash: [10,10],
+                    fill: false
+                  }
+                ]
+                },
+                options: {
+                  plugins: {
+                    title: {
+                      display: true,
+                      text: 'Continuity Count Errors'
+                    },
+                    legend: {
+                      display: false
+                    }
+                  },
+                  maintainAspectRatio: true
+                }
+        });
 }
 
 function loadDetails(){
