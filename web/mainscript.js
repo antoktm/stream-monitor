@@ -96,7 +96,7 @@ function populateList(xml){
 		chBuffer = xmlDoc.getElementsByTagName("BUFFER");
 	}
 	else {
-		chContinuity = xmlDoc.getElementsByTagName("CONTRATE");
+		chContinuity = xmlDoc.getElementsByTagName("CCAVERAGE");
 	}
 	
 	for (i = 0; i< chName.length; i++){
@@ -123,7 +123,7 @@ function populateList(xml){
 			oneLine +=  " onClick=\"popupCenter({url: 'details.html?" + uri + "', title: 'Channel Details', w: 900, h: 500})\"><h2>" + chName[i].childNodes[0].nodeValue + "</h2><p>" + thisProfileCount + " profile(s)</br>" + chBuffer[i].childNodes[0].nodeValue + " sec(s) buffering</br>" + thisMbps.toFixed(2) + " Mbps</p></div>";
 		}
 		else {
-			oneLine +=  " onClick=\"popupCenter({url: 'details.html?" + uri + "', title: 'Channel Details', w: 900, h: 500})\"><h2>" + chName[i].childNodes[0].nodeValue + "</h2><p>" + thisProfileCount + " profile(s)</br>" + chContinuity[i].childNodes[0].nodeValue + "% continuous</br>" + thisMbps.toFixed(2) + " Mbps</p></div>";
+			oneLine +=  " onClick=\"popupCenter({url: 'details.html?" + uri + "', title: 'Channel Details', w: 900, h: 500})\"><h2>" + chName[i].childNodes[0].nodeValue + "</h2><p>" + thisProfileCount + " profile(s)</br>" + "CC Errors : " + chContinuity[i].childNodes[0].nodeValue + "</br>" + thisMbps.toFixed(2) + " Mbps</p></div>";
 		}
 		
  		txtAll += oneLine;
