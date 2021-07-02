@@ -16,7 +16,7 @@ address=$3
 configfile=$4
 configlines=$(sed 's/#.*//' $configfile)
 
-expectedcont=$(grep mincontinuityrate <<< "$configlines"|cut -d"=" -f2)
+maxccerror=$(grep maxaverageccerror <<< "$configlines"|cut -d"=" -f2)
 tmpdir=$(grep tmpdir <<< "$configlines"|cut -d"=" -f2)
 xmldir=$(grep xmldir <<< "$configlines"|cut -d"=" -f2)
 logfile=$(grep logfile <<< "$configlines"|cut -d"=" -f2)
@@ -41,6 +41,14 @@ outputfile=$xmldir/$chid.xml
 oldstat=`cat $outputfile | grep CHSTAT | sed -e 's/.*<CHSTAT>//' -e 's/<\/CHSTAT>.*//'`
 newstat=ONLINE
 oldchanges=`cat $outputfile | grep CHLASTCHANGE | sed -e 's/.*<CHLASTCHANGE>//' -e 's/<\/CHLASTCHANGE>.*//'`
+
+## continuity error historical counter
+oldconterror=$(cat $outputfile | grep CCERROR | sed -e 's/.*<CCERROR>//' -e 's/<\/CCERROR>.*//'| cut -d, -f2-4)
+ccerrorvars=4
+if [ -z "$oldconterror" ]
+then
+        oldconterror=0
+fi
 
 ## variables initialization
 totalbitrate=0
@@ -74,16 +82,19 @@ do
 	totaldiscontinuities=$(( totaldiscontinuities + disccount ))
 done
 
+## CC Error average count
+ccnumerator=$(echo "$totaldiscontinuities,$oldconterror" | sed -e 's/,/+/g' |bc)
+ccaverage=$(( ccnumerator / ccerrorvars ))
+
 if [ "$totalpacket" -gt 0 ]
 then
-	continuityrate=$(( (totalpacket - totaldiscontinuities)*100/totalpacket ))
-	if [ "$continuityrate" -lt "$expectedcont" ]
+	if [ "$ccaverage" -gt "$maxccerror" ]
 	then
 		newstat="WARNING"
 	fi
 else
 	totalbitrate=0
-	continuityrate=0
+	ccaverage=0
 	newstat="OUTAGE"
 fi
 
@@ -134,7 +145,8 @@ echo "		<CHLASTCHANGE>$newchanges</CHLASTCHANGE>"
 echo "		<CHMONITORED>$monitored</CHMONITORED>"
 echo "		<CHADDRESS>$address</CHADDRESS>"
 echo "		<BITRATE>$totalbitrate</BITRATE>"
-echo "		<CONTRATE>$continuityrate</CONTRATE>"
+echo "          <CCERROR>$oldconterror,$totaldiscontinuities</CCERROR>"
+echo "          <CCAVERAGE>$ccaverage</CCAVERAGE>"
 echo "          <SOURCEIP>$source</SOURCEIP>"
 if [ "$freezemode" == "on" ]
 then
