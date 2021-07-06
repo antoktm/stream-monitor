@@ -57,9 +57,9 @@ savexmltmp=$tmpdir/$chidnorm.xml.tmp
 # TSDuck command for UDP probing
 if [ "$freezemode" == "on" ];
 then
-	dummyvar=$((tsp -I ip --receive-timeout $timeout -l $inputip $address -P analyze --normalize -o $save -P until -s $duration |ffmpeg -i pipe:0 -loglevel quiet -vf "freezedetect=n=$frznoise:d=$frzsecs,metadata=mode=print:file=$save.frz" -map 0:v:0 -acodec copy -f null - -vframes 1 -s 256x144 $save.png) 2>&1)
+	dummyvar=$((tsp -d9 -I ip --receive-timeout $timeout -l $inputip $address -P analyze --normalize -o $save -P until -s $duration |ffmpeg -i pipe:0 -loglevel quiet -vf "freezedetect=n=$frznoise:d=$frzsecs,metadata=mode=print:file=$save.frz" -map 0:v:0 -acodec copy -f null - -vframes 1 -s 256x144 $save.png) 2>&1)
 else
-	dummyvar=$((tsp -I ip --receive-timeout $timeout -l $inputip $address -P analyze --normalize -o $save -P until -s $duration -O drop) 2>&1)
+	dummyvar=$((tsp -d9 -I ip --receive-timeout $timeout -l $inputip $address -P analyze --normalize -o $save -P until -s $duration -O drop) 2>&1)
 fi
 
 # get sources
