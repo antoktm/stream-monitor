@@ -26,7 +26,8 @@ monitordur=$(grep monitorduration <<< "$configlines"|cut -d"=" -f2)
 freezethreshold=$(grep freezedurationpercentage <<< "$configlines"|cut -d"=" -f2)
 
 inputfile=$tmpdir/$chid
-[ ! -f "$inputfile" ] && { echo "Error: $0 file not found."; exit 2; }
+# Commented to fix outage detection
+# [ ! -f "$inputfile" ] && { echo "Error: $0 file not found."; exit 2; }
  
 if [ -s "$inputfile" ] 
 then
