@@ -48,7 +48,12 @@ oldconterror=$(cat $outputfile | grep CCERROR | sed -e 's/.*<CCERROR>//' -e 's/<
 ccerrorvars=4
 if [ -z "$oldconterror" ]
 then
-        oldconterror=0
+        oldconterror="0,0,0"
+fi
+countcommas=$(echo $oldconterror | tr -d -c ',' | awk '{ print length; }')
+if [ "$countcommas" -lt 2 ]
+then
+        oldconterror="0,0,0"
 fi
 
 ## variables initialization
