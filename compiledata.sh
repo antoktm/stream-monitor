@@ -54,7 +54,7 @@ do
 		then
 			chbuffer=$(grep BUFFER $xmldir/$chidnorm-0.xml | sed -e 's/.*<BUFFER>//' -e 's/<\/BUFFER>.*//')
 		else
-			chcontrate=$(grep CONTRATE $xmldir/$chidnorm-0.xml | sed -e 's/.*<CONTRATE>//' -e 's/<\/CONTRATE>.*//')
+			chcontrate=$(grep CCAVERAGE $xmldir/$chidnorm-0.xml | sed -e 's/.*<CCAVERAGE>//' -e 's/<\/CCAVERAGE>.*//')
 		fi
 
 		for (( i=1; i<chprofilecount; i++ ))
@@ -83,7 +83,7 @@ do
 					chbuffer=$thischbuffer
 				fi
 			else
-				thischcontrate=$(grep CONTRATE $xmldir/$chidnorm-$i.xml | sed -e 's/.*<CONTRATE>//' -e 's/<\/CONTRATE>.*//')
+				thischcontrate=$(grep CCAVERAGE $xmldir/$chidnorm-$i.xml | sed -e 's/.*<CCAVERAGE>//' -e 's/<\/CCAVERAGE>.*//')
 				chcontrate=$(( ( (chcontrate * i) + thischcontrate ) / ( i + 1 ) ))
 			fi
 		done
@@ -95,7 +95,7 @@ do
                 then
 			echo "		<BUFFER>"$chbuffer"</BUFFER>" >> $compxmltmp
 		else
-			echo "		<CONTRATE>"$chcontrate"</CONTRATE>" >> $compxmltmp
+			echo "		<CCAVERAGE>"$chcontrate"</CCAVERAGE>" >> $compxmltmp
 		fi
 		echo "		<PROFILECOUNT>"$(( chprofilecount - 1 ))"</PROFILECOUNT>" >> $compxmltmp
 	else
@@ -106,7 +106,7 @@ do
                 	then
 				egrep "CHID|CHNAME|CHSTAT|CHLASTCHANGE|BITRATE|BUFFER" $xmldir/$chidnorm.xml >> $compxmltmp
 			else
-				egrep "CHID|CHNAME|CHSTAT|CHLASTCHANGE|BITRATE|CONTRATE" $xmldir/$chidnorm.xml >> $compxmltmp
+				egrep "CHID|CHNAME|CHSTAT|CHLASTCHANGE|BITRATE|CCAVERAGE" $xmldir/$chidnorm.xml >> $compxmltmp
 			fi
 		else
 			chstat=$(grep CHSTAT $xmldir/dummy.xml | sed -e 's/.*<CHSTAT>//' -e 's/<\/CHSTAT>.*//')
@@ -117,7 +117,7 @@ do
                 	then
 				egrep "CHSTAT|CHLASTCHANGE|BITRATE|BUFFER" $xmldir/dummy.xml >> $compxmltmp
 			else
-				egrep "CHSTAT|CHLASTCHANGE|BITRATE|CONTRATE" $xmldir/dummy.xml >> $compxmltmp
+				egrep "CHSTAT|CHLASTCHANGE|BITRATE|CCAVERAGE" $xmldir/dummy.xml >> $compxmltmp
 			fi
 		fi
 

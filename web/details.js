@@ -221,7 +221,6 @@ function populateProfile(xml,profileTxt){
 	{
 		freezePct = xmlDoc.getElementsByTagName("FREEZEPCT")[0].childNodes[0].nodeValue;
                 freezeTime = xmlDoc.getElementsByTagName("FREEZEDUR")[0].childNodes[0].nodeValue;
-		chContinuity = xmlDoc.getElementsByTagName("CONTRATE")[0].childNodes[0].nodeValue;
                 chIdNum = xmlDoc.getElementsByTagName("CHID")[0].childNodes[0].nodeValue;
 		chSource = xmlDoc.getElementsByTagName("SOURCEIP")[0].childNodes[0].nodeValue;
 		
