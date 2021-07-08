@@ -9,6 +9,9 @@
 #########################################################
 
 [ $# -eq 0 ] && { echo "Usage: $0 configfile"; exit 1; }
+# Get current script path
+workdir="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+
 # Read the parameters and config file
 configfile=$1
 configlines=$(sed 's/#.*//' $configfile)
@@ -109,15 +112,15 @@ do
 				egrep "CHID|CHNAME|CHSTAT|CHLASTCHANGE|BITRATE|CCAVERAGE" $xmldir/$chidnorm.xml >> $compxmltmp
 			fi
 		else
-			chstat=$(grep CHSTAT $xmldir/dummy.xml | sed -e 's/.*<CHSTAT>//' -e 's/<\/CHSTAT>.*//')
+			chstat=$(grep CHSTAT $workdir/dummy.xml | sed -e 's/.*<CHSTAT>//' -e 's/<\/CHSTAT>.*//')
 			chname=$(echo $line|cut -d, -f2)
 			echo "		<CHID>$chid</CHID>" >> $compxmltmp
 			echo "		<CHNAME>$chname</CHNAME>" >> $compxmltmp
 			if [ "$mode" = "hls" ]
                 	then
-				egrep "CHSTAT|CHLASTCHANGE|BITRATE|BUFFER" $xmldir/dummy.xml >> $compxmltmp
+				egrep "CHSTAT|CHLASTCHANGE|BITRATE|BUFFER" $workdir/dummy.xml >> $compxmltmp
 			else
-				egrep "CHSTAT|CHLASTCHANGE|BITRATE|CCAVERAGE" $xmldir/dummy.xml >> $compxmltmp
+				egrep "CHSTAT|CHLASTCHANGE|BITRATE|CCAVERAGE" $workdir/dummy.xml >> $compxmltmp
 			fi
 		fi
 
