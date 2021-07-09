@@ -32,8 +32,9 @@ function udpscan {
 # Read the list file
 	chlist=$(echo $chlistfull|cut -d"=" -f2|rev|cut -d"/" -f1|rev)
 	dos2unix -n $chlistfull $tmpdir/$chlist
+	cat $tmpdir/$chlist | grep -v '^$' > $tmpdir/$chlist.bak
+        mv $tmpdir/$chlist.bak $tmpdir/$chlist
 	configlines=$(sed 's/#.*//' $configfile)
-
 
 	maxconcur=$(grep maxconcurrent <<< "$configlines"|cut -d"=" -f2)
 	listlength=$(cat $tmpdir/$chlist |wc -l)
@@ -108,9 +109,10 @@ function hlsscan {
 # Read the list file
 	chlist=$(echo $chlistfull|cut -d"=" -f2|rev|cut -d"/" -f1|rev)
 	dos2unix -n $chlistfull $tmpdir/$chlist
+	cat $tmpdir/$chlist | grep -v '^$' > $tmpdir/$chlist.bak
+        mv $tmpdir/$chlist.bak $tmpdir/$chlist
 	chlist=$tmpdir/$chlist
 	listlength=$(cat $chlist |wc -l)
-
 
 	while read line
 	do	
