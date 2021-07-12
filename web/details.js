@@ -237,10 +237,10 @@ function populateProfile(xml,profileTxt){
 
 	if (chStat == "ONLINE") {
 
-		document.getElementById("profilesgrid").innerHTML += "<h2>Profile " + profileTxt + " : " + chAddress + "</h2>"
+		document.getElementById("profilesgrid").insertAdjacentHTML("beforeend", "<h2>Profile " + profileTxt + " : " + chAddress + "</h2>");
 	}
 	else {
-		document.getElementById("profilesgrid").innerHTML += "<h2><font color=\"red\">Profile " + profileTxt + " - " + chStat + " : " + chAddress + "</font></h2>"		
+		document.getElementById("profilesgrid").insertAdjacentHTML("beforeend", "<h2><font color=\"red\">Profile " + profileTxt + " - " + chStat + " : " + chAddress + "</font></h2>");
 	}
 
 	if (chType != "HLS") {
@@ -284,7 +284,7 @@ function populateProfile(xml,profileTxt){
 	}
 	oneLine += "</div>";
 
-	document.getElementById("profilesgrid").innerHTML += oneLine;
+	document.getElementById("profilesgrid").insertAdjacentHTML("beforeend", oneLine);
 
 	if (chType != "HLS") {
                 drawCCChart(chCCArr,chCCAverage,thisChartCanvas);
