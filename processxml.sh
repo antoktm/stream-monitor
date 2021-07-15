@@ -154,6 +154,7 @@ echo "		<BITRATE>$totalbitrate</BITRATE>"
 echo "          <CCERROR>$oldconterror,$totaldiscontinuities</CCERROR>"
 echo "          <CCAVERAGE>$ccaverage</CCAVERAGE>"
 echo "          <SOURCEIP>$source</SOURCEIP>"
+echo "		<THUMBCLASS>not monitored</THUMBCLASS>"
 if [ "$freezemode" == "on" ]
 then
 	echo "		<FREEZEDUR>$freezeduration</FREEZEDUR>"
